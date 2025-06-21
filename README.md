@@ -1,9 +1,3 @@
-# SauceDemo Login Form Automated Tests
-
-This project implements UI automated tests for the login form of [SauceDemo](https://www.saucedemo.com/).
-
----
-
 ## 📋 Original Task Description
 
 > **Launch URL**: https://www.saucedemo.com/  
@@ -27,8 +21,10 @@ This project implements UI automated tests for the login form of [SauceDemo](htt
 > Click on Login and validate the title **“Swag Labs”** in the dashboard.  
 >
 > Provide **parallel execution**, add **logging** for tests and use **Data Provider** to **parametrize tests**.  
-> Make sure that all tasks are supported by these 3 conditions: **UC-1; UC-2; UC-3**.  
->
+> Make sure that all tasks are supported by these 3 conditions: **UC-1; UC-2; UC-3**.
+> 
+> Please, add task description as README.md into your solution!
+> 
 > To perform the task use the various additional options:  
 > - **Test Automation tool**: Selenium WebDriver  
 > - **Browsers**: Edge, Firefox  
