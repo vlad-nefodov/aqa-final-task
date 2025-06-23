@@ -1,24 +1,25 @@
 ﻿using OpenQA.Selenium;
 
-namespace Core.WebDriver.Decorators.WebElementDecorators
+namespace Core.WebDriver.Decorators.WebElementDecorators;
+
+public class ClearInputValueWebElementDecorator : BaseWebElementDecorator
 {
-    public class ClearInputValueWebElementDecorator : BaseWebElementDecorator
+    public ClearInputValueWebElementDecorator(IWebElement element) : base(element)
     {
-        public ClearInputValueWebElementDecorator(IWebElement element) : base(element) { }
+    }
 
-        public override void Clear()
+    public override void Clear()
+    {
+        var tagName = _element.TagName.ToLower();
+        var type = _element.GetAttribute("type")?.ToLower();
+
+        if (tagName == "input" && (type == "text" || type == "password"))
         {
-            string tagName = _element.TagName.ToLower();
-            string? type = _element.GetAttribute("type")?.ToLower();
-
-            if (tagName == "input" && (type == "text" || type == "password"))
-            {
-                _element.SendKeys(Keys.Control + "a" + Keys.Backspace);
-            }
-            else
-            {
-                base.Clear();
-            }
+            _element.SendKeys(Keys.Control + "a" + Keys.Backspace);
+        }
+        else
+        {
+            base.Clear();
         }
     }
 }

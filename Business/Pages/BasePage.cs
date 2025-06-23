@@ -1,28 +1,30 @@
 ﻿using Business.Abstractions;
 
-namespace Business.Pages
+namespace Business.Pages;
+
+public abstract class BasePage<TPage> : PageConfiguration where TPage : BasePage<TPage>
 {
-    public abstract class BasePage<TPage> : PageConfiguration where TPage : BasePage<TPage>
+    protected readonly IWebDriver Driver;
+
+    protected BasePage(IWebDriver driver)
     {
-        protected readonly IWebDriver _driver;
+        Driver = driver ?? throw new ArgumentNullException(nameof(driver));
+    }
 
-        protected BasePage(IWebDriver driver)
-        {
-            _driver = driver ?? throw new ArgumentNullException(nameof(driver));
-        }
+    protected abstract string PagePath { get; }
 
-        protected abstract string PagePath { get; }
+    public string Url => $"{BaseUrl}/{PagePath.TrimStart('/')}";
 
-        public string Url => $"{BaseUrl}/{PagePath.TrimStart('/')}";
+    public virtual TPage Open()
+    {
+        Driver.NavigateTo(Url);
+        Logger?.Debug($"Navigated to {Url}");
 
-        public virtual TPage Open()
-        {
-            _driver.NavigateTo(Url);
-            Logger?.Debug($"Navigated to {Url}");
+        return (TPage)this;
+    }
 
-            return (TPage)this;
-        }
-
-        public virtual bool IsPageUrlConsistent() => _driver.Url == Url;
+    public virtual bool IsPageUrlConsistent()
+    {
+        return Driver.Url == Url;
     }
 }

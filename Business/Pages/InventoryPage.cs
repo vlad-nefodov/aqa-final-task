@@ -1,26 +1,25 @@
 ﻿using Business.Abstractions;
 
-namespace Business.Pages
+namespace Business.Pages;
+
+public class InventoryPage : BasePage<InventoryPage>
 {
-    public class InventoryPage : BasePage<InventoryPage>
+    private readonly Locator _dashboardTitleLocator;
+
+    public InventoryPage(IWebDriver driver) : base(driver)
     {
-        private readonly Locator _dashboardTitleLocator;
+        _dashboardTitleLocator = LocatorProvider.XPath("//div[contains(@class, 'app_logo')]");
+    }
 
-        protected override string PagePath => "/inventory.html";
+    protected override string PagePath => "/inventory.html";
 
-        public InventoryPage(IWebDriver driver) : base(driver) 
-        {
-            _dashboardTitleLocator = LocatorProvider.XPath("//div[contains(@class, 'app_logo')]");
-        }
+    public string GetDashboardTitle()
+    {
+        return Driver.GetText(_dashboardTitleLocator);
+    }
 
-        public string GetDashboardTitle()
-        {
-            return _driver.GetText(_dashboardTitleLocator);
-        }
-
-        public bool IsDashboardTitleDisplayed()
-        {
-            return _driver.IsDisplayed(_dashboardTitleLocator);
-        }
+    public bool IsDashboardTitleDisplayed()
+    {
+        return Driver.IsDisplayed(_dashboardTitleLocator);
     }
 }

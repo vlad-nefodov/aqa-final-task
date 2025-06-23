@@ -6,122 +6,145 @@ using Core.WebDriver;
 using Core.WebDriver.Factories;
 using FluentAssertions;
 using NLog;
+using ILogger = NLog.ILogger;
 
-namespace Tests.Suites
+namespace Tests.Suites;
+
+[TestClass]
+public sealed class LoginFormTests
 {
-    [TestClass]
-    public sealed class LoginFormTests
+    private static ILogger _logger;
+    private IWebDriver _pageDriver;
+
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext _)
     {
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext _)
-        {
-            var _cfg = ConfigurationProvider.Tests;
-            var _logger = LogManager.GetLogger("123");
-            var webDriverFactory = new WebDriverFactory(_cfg.BrowserType);
+        var cfg = ConfigurationProvider.Tests;
+        var webDriverFactory = new WebDriverFactory(cfg.BrowserType);
 
-            _logger.Info("Initializing WebDriver...");
-            WebDriverManager.SetFactory(webDriverFactory);
+        _logger = LogManager.GetCurrentClassLogger();
+        _logger.Info("Initializing WebDriver...");
 
-            PageConfiguration.BaseUrl = _cfg.BaseUrl;
-            PageConfiguration.LocatorProvider = new LocatorProvider();
-            PageConfiguration.Logger = new LoggerAdapter(_logger);
-        }
+        WebDriverManager.SetFactory(webDriverFactory);
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            WebDriverManager.Instance.Configure();
-        }
+        PageConfiguration.BaseUrl = cfg.BaseUrl;
+        PageConfiguration.LocatorProvider = new LocatorProvider();
+        PageConfiguration.Logger = new LoggerAdapter(_logger);
+    }
 
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            WebDriverManager.Instance.Quit();
-        }
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        _logger.Info("Configuting WebDriver...");
+        _pageDriver = new WebDriverPageAdapter(WebDriverManager.Instance);
+        WebDriverManager.Instance.Configure(5);
+    }
 
-        [DataTestMethod]
-        [DynamicData(nameof(DataProvider.LoginForm_UC1_Data), typeof(DataProvider))]
-        public void UC1_LoginWithEmptyCredentials_ShowsUsernameRequired(string username, string password)
-        {
-            string expectedErrorMessage = "Username is required";
+    [TestCleanup]
+    public void TestCleanup()
+    {
+        WebDriverManager.Instance.Quit();
+        _logger.Info("Closed WebDriver");
+    }
 
-            var loginPage = new LoginPage(new WebDriverPageAdapter(WebDriverManager.Instance))
-                .Open()
-                .EnterCridentials(username, password)
-                .ClearUsername()
-                .ClearPassword()
-                .ClickLogin();
+    [DataTestMethod]
+    [DynamicData(nameof(DataProvider.LoginFormUc1Data), typeof(DataProvider))]
+    public void UC1_LoginWithEmptyCredentials_ShowsUsernameRequired(string username, string password)
+    {
+        _logger.Info($"[UC1] Starting test with username: '{username}' and password: '{password}'");
+        const string expectedErrorMessage = "Username is required";
 
-            loginPage
-                .IsPageUrlConsistent()
-                .Should()
-                .BeTrue();
+        var loginPage = new LoginPage(_pageDriver)
+            .Open()
+            .EnterCredentials(username, password)
+            .ClearUsername()
+            .ClearPassword()
+            .ClickLogin();
+        _logger.Info("[UC1] Performed login with cleared credentials");
 
-            loginPage
-                .IsErrorMessageDisplayed()
-                .Should()
-                .BeTrue();
+        loginPage
+            .IsPageUrlConsistent()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC1] Verified URL is consistent");
 
-            loginPage
-                .GetErrorMessage()
-                .Should()
-                .Contain(expectedErrorMessage);
-        }
+        loginPage
+            .IsErrorMessageDisplayed()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC1] Verified error message is displayed");
 
-        [DataTestMethod]
-        [DynamicData(nameof(DataProvider.LoginForm_UC2_Data), typeof(DataProvider))]
-        public void UC2_LoginWithEmptyPassword_ShowsPasswordRequired(string username, string password)
-        {
-            string expectedErrorMessage = "Password is required";
+        loginPage
+            .GetErrorMessage()
+            .Should()
+            .Contain(expectedErrorMessage);
+        _logger.Info("[UC1] Verified error message contains expected text");
+    }
 
-            var loginPage = new LoginPage(new WebDriverPageAdapter(WebDriverManager.Instance))
-                .Open()
-                .EnterCridentials(username, password)
-                .ClearPassword()
-                .ClickLogin();
+    [DataTestMethod]
+    [DynamicData(nameof(DataProvider.LoginFormUc2Data), typeof(DataProvider))]
+    public void UC3_LoginWithEmptyPassword_ShowsPasswordRequired(string username, string password)
+    {
+        _logger.Info($"[UC2] Starting test with username: '{username}' and password: '{password}'");
+        const string expectedErrorMessage = "Password is required";
 
-            loginPage
-                .IsPageUrlConsistent()
-                .Should()
-                .BeTrue();
+        var loginPage = new LoginPage(_pageDriver)
+            .Open()
+            .EnterCredentials(username, password)
+            .ClearPassword()
+            .ClickLogin();
+        _logger.Info("[UC2] Performed login with empty password");
 
-            loginPage
-                .IsErrorMessageDisplayed()
-                .Should()
-                .BeTrue();
+        loginPage
+            .IsPageUrlConsistent()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC2] Verified URL is consistent");
 
-            loginPage
-                .GetErrorMessage()
-                .Should()
-                .Contain(expectedErrorMessage);
-        }
+        loginPage
+            .IsErrorMessageDisplayed()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC2] Verified error message is displayed");
 
-        [DataTestMethod]
-        [DynamicData(nameof(DataProvider.LoginForm_UC3_Data), typeof(DataProvider))]
-        public void UC3_LoginWithValidCredentials_DisplaysDashboardWithValidTitle(string username, string password)
-        {
-            string expectedTitle = "Swag Labs";
+        loginPage
+            .GetErrorMessage()
+            .Should()
+            .Contain(expectedErrorMessage);
+        _logger.Info("[UC2] Verified error message contains expected text");
+    }
 
-            var inventoryPage = new LoginPage(new WebDriverPageAdapter(WebDriverManager.Instance))
-                .Open()
-                .EnterCridentials(username, password)
-                .ClickLogin()
-                .LoginSuccessful();
+    [DataTestMethod]
+    [DynamicData(nameof(DataProvider.LoginFormUc3Data), typeof(DataProvider))]
+    public void UC3_LoginWithValidCredentials_DisplaysDashboardWithValidTitle(string username, string password)
+    {
+        _logger.Info($"[UC3] Starting test with valid username: '{username}' and password: '{password}'");
 
-            inventoryPage
-                .IsPageUrlConsistent()
-                .Should()
-                .BeTrue();
+        const string expectedTitle = "Swag Labs";
 
-            inventoryPage
-                .IsDashboardTitleDisplayed()
-                .Should()
-                .BeTrue();
+        var inventoryPage = new LoginPage(_pageDriver)
+            .Open()
+            .EnterCredentials(username, password)
+            .ClickLogin()
+            .LoginSuccessful();
+        _logger.Info("[UC3] Performed successful login");
 
-            inventoryPage
-                .GetDashboardTitle()
-                .Should()
-                .Be(expectedTitle);
-        }
+        inventoryPage
+            .IsPageUrlConsistent()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC3] Verified URL is consistent");
+
+        inventoryPage
+            .IsDashboardTitleDisplayed()
+            .Should()
+            .BeTrue();
+        _logger.Info("[UC3] Verified dashboard title is displayed");
+
+        inventoryPage
+            .GetDashboardTitle()
+            .Should()
+            .Be(expectedTitle);
+        _logger.Info("[UC3] Verified dashboard title matches expected value");
     }
 }

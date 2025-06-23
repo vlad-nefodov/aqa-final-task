@@ -1,36 +1,35 @@
-﻿namespace Tests
+﻿namespace Tests;
+
+public static class DataProvider
 {
-    public static class DataProvider
+    public static IEnumerable<string[]> LoginFormUc1Data
     {
-        public static IEnumerable<string[]> LoginForm_UC1_Data
+        get
         {
-            get
-            {
-                yield return new string[] { "standard_user", "secret_sauce" };
-                yield return new string[] { "     ", "123456" };
-                yield return new string[] { "!@#$%^", "<script>alert(1)</script>" };
-            }
+            yield return new[] { "standard_user", "secret_sauce" };
+            yield return new[] { "     ", "123456" };
+            yield return new[] { "!@#$%^", "<script>alert(1)</script>" };
         }
+    }
 
-        public static IEnumerable<string[]> LoginForm_UC2_Data
+    public static IEnumerable<string[]> LoginFormUc2Data
+    {
+        get
         {
-            get
-            {
-                yield return new string[] { " s ", "123456" };
-                yield return new string[] { "locked_out_user", "doesntmatter" };
-                yield return new string[] { "secret_sauce", "standard_user" };
-            }
+            yield return new[] { " s ", "123456" };
+            yield return new[] { "locked_out_user", "doesntmatter" };
+            yield return new[] { "secret_sauce", "standard_user" };
         }
+    }
 
-        public static IEnumerable<string[]> LoginForm_UC3_Data
+    public static IEnumerable<string[]> LoginFormUc3Data
+    {
+        get
         {
-            get
-            {
-                yield return new string[] { "standard_user", "secret_sauce" };
-                yield return new string[] { "problem_user", "secret_sauce" };
-                yield return new string[] { "error_user", "secret_sauce" };
-                yield return new string[] { "visual_user", "secret_sauce" };
-            }
+            yield return new[] { "standard_user", "secret_sauce" };
+            yield return new[] { "problem_user", "secret_sauce" };
+            yield return new[] { "error_user", "secret_sauce" };
+            yield return new[] { "visual_user", "secret_sauce" };
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace Business.Abstractions
+﻿namespace Business.Abstractions;
+
+public interface ILogger
 {
-    public interface ILogger
-    {
-        void Debug(string message);
+    void Debug(string message);
 
-        void Trace(string message);
+    void Trace(string message);
 
-        void Warn(string message);
+    void Warn(string message);
 
-        void Error(string message);
-    }
+    void Error(string message);
 }

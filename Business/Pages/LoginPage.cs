@@ -1,82 +1,87 @@
 ﻿using Business.Abstractions;
 
-namespace Business.Pages
+namespace Business.Pages;
+
+public class LoginPage : BasePage<LoginPage>
 {
-    public class LoginPage : BasePage<LoginPage>
+    private readonly Locator _errorMessageLocator;
+    private readonly Locator _loginButtonLocator;
+    private readonly Locator _passwordInputLocator;
+    private readonly Locator _usernameInputLocator;
+
+    public LoginPage(IWebDriver driver) : base(driver)
     {
-        private readonly Locator _usernameInputLocator;
-        private readonly Locator _passwordInputLocator;
-        private readonly Locator _loginButtonLocator;
-        private readonly Locator _errorMessageLocator;
+        _usernameInputLocator = LocatorProvider.XPath("//input[@data-test='username']");
+        _passwordInputLocator = LocatorProvider.XPath("//input[@data-test='password']");
+        _loginButtonLocator = LocatorProvider.XPath("//input[@data-test='login-button']");
+        _errorMessageLocator = LocatorProvider.XPath("//h3[@data-test='error']");
+    }
 
-        protected override string PagePath => "";
+    protected override string PagePath => "";
 
-        public LoginPage(IWebDriver driver) : base(driver) 
-        {
-            _usernameInputLocator = LocatorProvider.XPath("//input[@data-test='username']");
-            _passwordInputLocator = LocatorProvider.XPath("//input[@data-test='password']");
-            _loginButtonLocator = LocatorProvider.XPath("//input[@data-test='login-button']");
-            _errorMessageLocator = LocatorProvider.XPath("//h3[@data-test='error']");
-        }
+    public LoginPage EnterUsername(string username)
+    {
+        Driver.EnterText(_usernameInputLocator, username);
+        Logger?.Debug("Entered username.");
 
-        public LoginPage EnterUsername(string username)
-        {
-            _driver.EnterText(_usernameInputLocator, username);
-            Logger?.Debug("Entered username.");
+        return this;
+    }
 
-            return this;
-        }
+    public LoginPage EnterPassword(string password)
+    {
+        Driver.EnterText(_passwordInputLocator, password);
+        Logger?.Debug("Entered password.");
 
-        public LoginPage EnterPassword(string password)
-        {
-            _driver.EnterText(_passwordInputLocator, password);
-            Logger?.Debug("Entered password.");
+        return this;
+    }
 
-            return this;
-        }
+    public LoginPage EnterCredentials(string username, string password)
+    {
+        EnterUsername(username);
+        EnterPassword(password);
 
-        public LoginPage EnterCridentials(string username, string password)
-        {
-            EnterUsername(username);
-            EnterPassword(password);
+        return this;
+    }
 
-            return this;
-        }
+    public LoginPage ClearUsername()
+    {
+        Driver.ClearInput(_usernameInputLocator);
+        Logger?.Debug("Cleared username.");
 
-        public LoginPage ClearUsername()
-        {
-            _driver.ClearInput(_usernameInputLocator);
-            Logger?.Debug("Cleared username.");
+        return this;
+    }
 
-            return this;
-        }
+    public LoginPage ClearPassword()
+    {
+        Driver.ClearInput(_passwordInputLocator);
+        Logger?.Debug("Cleared password.");
 
-        public LoginPage ClearPassword()
-        {
-            _driver.ClearInput(_passwordInputLocator);
-            Logger?.Debug("Cleared password.");
+        return this;
+    }
 
-            return this;
-        }
+    public LoginPage ClickLogin()
+    {
+        Driver.Click(_loginButtonLocator);
+        Logger?.Debug("Clicked login button.");
 
-        public LoginPage ClickLogin()
-        {
-            _driver.Click(_loginButtonLocator);
-            Logger?.Debug("Clicked login button.");
+        return this;
+    }
 
-            return this;
-        }
+    public bool IsErrorMessageDisplayed()
+    {
+        return Driver.IsDisplayed(_errorMessageLocator);
+    }
 
-        public bool IsErrorMessageDisplayed() => _driver.IsDisplayed(_errorMessageLocator);
+    public string GetErrorMessage()
+    {
+        return Driver.GetText(_errorMessageLocator);
+    }
 
-        public string GetErrorMessage() => _driver.GetText(_errorMessageLocator);
+    public InventoryPage LoginSuccessful()
+    {
+        var inventoryPage = new InventoryPage(Driver);
+        Logger?.Debug($"Navigated to {inventoryPage.Url}");
 
-        public InventoryPage LoginSuccessful()
-        {
-            var inventoryPage = new InventoryPage(_driver);
-            Logger?.Debug($"Navigated to {inventoryPage.Url}");
-
-            return inventoryPage;
-        }
+        return inventoryPage;
     }
 }

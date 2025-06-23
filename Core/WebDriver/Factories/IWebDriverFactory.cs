@@ -1,9 +1,8 @@
 ﻿using OpenQA.Selenium;
 
-namespace Core.WebDriver.Factories
+namespace Core.WebDriver.Factories;
+
+public interface IWebDriverFactory
 {
-    public interface IWebDriverFactory
-    {
-        IWebDriver GetWebDriver();
-    }
+    IWebDriver GetWebDriver();
 }

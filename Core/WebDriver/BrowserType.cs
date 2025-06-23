@@ -1,8 +1,7 @@
-﻿namespace Core.WebDriver
+﻿namespace Core.WebDriver;
+
+public enum BrowserType : byte
 {
-    public enum BrowserType
-    {
-        Edge,
-        Firefox
-    }
+    Edge,
+    Firefox
 }

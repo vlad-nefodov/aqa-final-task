@@ -1,9 +1,8 @@
-﻿namespace Business.Abstractions
+﻿namespace Business.Abstractions;
+
+public enum LocatorType : byte
 {
-    public enum LocatorType : byte
-    {
-        Id,
-        Name,
-        XPath
-    }
+    Id,
+    Name,
+    XPath
 }

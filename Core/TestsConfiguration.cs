@@ -1,10 +1,9 @@
 ﻿using Core.WebDriver;
 
-namespace Core
+namespace Core;
+
+public class TestsConfiguration
 {
-    public class TestsConfiguration
-    {
-        public BrowserType BrowserType { get; set; }
-        public string BaseUrl { get; set; }
-    }
+    public BrowserType BrowserType { get; set; }
+    public string BaseUrl { get; set; }
 }
